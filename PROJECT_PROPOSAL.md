@@ -30,6 +30,8 @@ We will build a unified regression model that predicts agricultural outcomes (yi
 - Climate features rank high in feature importance
 - AdaBoost improves baseline RMSE by 10-20%
 
+**Hope to Achieve:** We hope to achieve a successful model that can accurately predict agricultural product outcomes based on environmental fluctuations. These fluctuations can be anywhere from rainfall, to drought levels as well as duration for each. With this predictive model we can hopefully have an impact on farmers within Texas counties and assist them.
+
 ## Dataset
 
 **Size:** 398,204 records × 120 features = **47,784,480 floats** (exceeds 10M requirement)
