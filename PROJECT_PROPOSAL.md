@@ -91,7 +91,7 @@ We will build a unified regression model that predicts agricultural outcomes (yi
 - Week 5: PCA analysis and dimensionality experiments
 - Week 6: Final evaluation, visualizations, report writing
 
-**Tools:** Jupyter notebooks (version control via Git), scikit-learn, pandas, shared Google Drive for documentation
+**Tools:** Jupyter notebooks (version control via Git), scikit-learn, pandas, shared Google Drive for documentation, cleansing tools (powerBI)
 
 **Success Mechanisms:** Weekly progress check-ins, shared task board with deadlines, pair programming for complex sections
 
