@@ -54,7 +54,7 @@ We will build a unified regression model that predicts agricultural outcomes (yi
 
 ## Methodology
 
-**Pre training objectives**
+**Pre-training objectives:**
 
 - Going through dataset to find potentially useless data that may impact the training and predictive process
 - Using tools such as powerBI and other query tools to cleanse and organize data to reduce variance and outliers
