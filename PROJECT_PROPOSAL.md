@@ -110,7 +110,7 @@ We will build a unified regression model that predicts agricultural outcomes (yi
 
 **Data Alternative:** If climate merge fails, use only temporal/spatial features (county, year, crop) as baseline predictors. Alternative: PRISM climate data or Texas specific weather station data.
 
-**Task Alternative:** 
+**Task Alternative:** If any key component within our model pipeline fails, implement alernative modeling techniques, maybe even adapting evaluation metrics.
 
 **Method Alternative:** If Decision Tree performs poorly (R² < 0.3), switch to Random Forest baseline. If AdaBoost doesn't improve, try Gradient Boosting or Neural Network.
 
