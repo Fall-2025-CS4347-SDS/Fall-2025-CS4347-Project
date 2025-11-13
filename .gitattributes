@@ -1,0 +1,1 @@
+texas_agriculture_with_climate_2000_2023.csv filter=lfs diff=lfs merge=lfs -text

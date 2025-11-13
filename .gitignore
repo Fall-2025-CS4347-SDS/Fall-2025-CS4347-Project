@@ -1,0 +1,38 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Data files - exclude large raw data
+source-data/
+*.txt
+*.zip
+*.gz
+
+# Keep requirements and processed dataset
+!requirements.txt
+!texas_agriculture_with_climate_2000_2023.csv
+
+# Old/backup files
+old/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output files
+*.log
+*.out
