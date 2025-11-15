@@ -1,4 +1,6 @@
-# Predicting Agricultural Statistics for Texas Counties Using Climate Data
+# Project Proposal Title
+
+Predicting Texas Agricultural Production Using Climate Data
 
 ## Teammates
 
@@ -8,112 +10,144 @@
 
 ## Project Abstract
 
-We will build a unified regression model that predicts agricultural outcomes (yield, production, harvested acreage, sales) for Texas counties based on climate conditions, crop types, and temporal patterns. Using 398,204 records merging USDA agricultural data with NOAA climate data (47.8M floats total), we'll implement a Decision Tree baseline, improve it with AdaBoost, and apply PCA to address the curse of dimensionality from 72+ features.
+We're building a regression model to predict agricultural statistics (yield, production volume, acres harvested) for Texas counties based on climate conditions. Our dataset merges USDA agricultural records with NOAA climate data spanning 2000-2023, covering 254 counties and 165 crop types. We'll start with a Decision Tree baseline and improve it using AdaBoost ensemble methods. The model will help identify which climate factors most strongly influence crop outcomes, with potential applications in drought planning and resource allocation for Texas's $100B agriculture industry.
 
 ## Problem Statement
 
-**Problem:** Climate variability significantly impacts agriculture, but predicting specific agricultural outcomes from weather patterns across diverse crops and regions remains challenging. This project addresses: How accurately can we predict agricultural statistics (yield, production, area) for Texas counties using climate data?
+**Problem:** Can we predict agricultural outcomes for Texas counties using climate variables like precipitation, temperature, and growing degree days?
 
-**Importance:** Texas agriculture represents a $100B+ industry. Understanding climate-productivity relationships informs drought preparedness, resource allocation, and economic planning.
+**Importance:** Texas agriculture generates over $100 billion annually. Understanding climate-yield relationships can inform drought preparedness, irrigation planning, and crop selection decisions. Historical patterns show dramatic yield drops during drought years, but we lack quantitative models connecting specific climate conditions to production outcomes.
 
-**Benchmark:** We use three baselines: (1) mean prediction per crop/statistic, (2) persistence model (previous year's value), and (3) temporal Decision Tree regression. No existing benchmark combines this specific data fusion.
+**Benchmark:** We'll compare three baselines:
 
-**Data Sources:**
+1. Simple mean prediction (average yield per crop type)
+2. Persistence model (use previous year's value)
+3. Decision Tree Regressor (our primary baseline)
 
-- USDA NASS QuickStats: 398,204 Texas county-level records (2000-2023), 165 crops, 16 statistic types
-- NOAA nClimDiv: Monthly climate data for 255 counties (precipitation, temperature, degree days)
+The Decision Tree handles mixed data types well and provides interpretable feature importance, making it ideal for understanding climate-agriculture relationships.
 
-**Success Measures:**
+**Data sources:**
 
-- R² > 0.6 on held-out test set (2020-2023)
-- Model predicts lower yields during known drought years (2011, 2013-2014)
-- Climate features rank high in feature importance
-- AdaBoost improves baseline RMSE by 10-20%
+- USDA NASS QuickStats: 398,204 county-level agricultural records (2000-2023) covering 165 commodities
+- NOAA nClimDiv: Monthly climate measurements for 254 Texas counties including precipitation, max/min/avg temperature, and degree days
 
-**Hope to Achieve:** We hope to achieve a successful model that can accurately predict agricultural product outcomes based on environmental fluctuations. These fluctuations can be anywhere from rainfall, to drought levels as well as duration for each. With this predictive model we can hopefully have an impact on farmers within Texas counties and assist them.
+**Success measures:**
+
+- R² > 0.70 on test set (explains most variance)
+- Model correctly predicts yield decreases during known drought years (2011, 2013)
+- Climate features appear in top 10 feature importance rankings
+- RMSE below persistence model benchmark
+
+**Goal:** Build an interpretable model that quantifies how climate affects Texas crop production, providing actionable insights for agricultural planning.
 
 ## Dataset
 
-**Size:** 398,204 records × 120 features = **47,784,480 floats** (exceeds 10M requirement)
+**Size:** 398,204 rows x 120 features = 47,784,480 data points
 
 **Sources:**
 
-- USDA QuickStats (filtered from 23.3M nationwide records, 7GB)
-- NOAA nClimDiv county-level climate division data (28 files, fixed-width format)
+- USDA NASS QuickStats: Filtered from 23.3M nationwide records (7GB raw data)
+- NOAA nClimDiv: 28 fixed-width format climate files with county-level monthly measurements
 
-**Format:** Merged CSV (850 MB) combining agricultural statistics with climate variables via county FIPS codes and year. 96.5% merge success rate.
+**Format:** Merged CSV (850 MB) joining agricultural statistics with climate data via county FIPS codes and year.
 
-**Key Attributes (72 total):**
+**Key attributes:**
 
-- *Categorical:* County (255), Crop (165), Statistic Type (16), Year (24)
-- *Climate (60):* Monthly precipitation, max/min/avg temperature, degree days (Jan-Dec)
-- *Engineered (8):* Growing season precipitation/temperature (April-Sept), annual aggregates
-- *Target:* VALUE (range: 0.1 to 2.8B depending on statistic type and unit)
+*Categorical (4):*
 
-**Suitability:** Multi-source fusion creates novel dataset linking government agricultural records with authoritative climate data. Temporal span (24 years) includes major drought events for validation. County-level granularity balances detail with data availability.
+- `COUNTY_NAME`: 254 Texas counties (plus 2 aggregated entries: "OTHER" and combined county data)
+- `COMMODITY_DESC`: 165 crop types (cotton, wheat, corn, sorghum dominate)
+- `STATISTICCAT_DESC`: 16 measurement types (yield, production, area harvested, price, etc.)
+- `YEAR`: 2000-2023 (24 years)
+
+*Climate features (72):*
+
+- Monthly measurements (60 features): Precipitation, max/min/avg temperature, cooling/heating degree days for each month (Jan-Dec)
+- Engineered aggregates (12 features): Growing season totals (Apr-Sep) and annual averages
+  - Example ranges: Annual precipitation 3-95 inches, annual avg temperature 60-75°F
+
+*Target variable:*
+
+- `VALUE`: Continuous numeric ranging from 0.1 to 2.8 billion depending on statistic type and units (bushels, acres, dollars)
+
+**What makes it suitable:** The merged dataset directly connects climate conditions to agricultural outcomes at the county-year level, allowing us to model how weather affects crops. Our EDA revealed clear regional patterns (e.g., correlation between growing season temperature and corn yield: r = -0.70).
 
 ## Methodology
 
-**Pre-training objectives:**
-
-- Going through dataset to find potentially useless data that may impact the training and predictive process
-- Using tools such as powerBI and other query tools to cleanse and organize data to reduce variance and outliers
-
 **Baseline:** Decision Tree Regressor
 
-- Handles mixed categorical/numerical data naturally
-- Captures non-linear climate-agriculture relationships
-- Provides interpretable feature importance
+- Naturally handles mixed categorical/numerical features without extensive preprocessing
+- Captures non-linear relationships between climate and agriculture (e.g., optimal temperature ranges)
+- Provides interpretable feature importance to identify which climate factors matter most
+- Works well with our county-level spatial structure
 
-**Improvement:** AdaBoost Ensemble
+**Improvement:** AdaBoost (Adaptive Boosting)
 
-- Combines multiple weak learners to reduce bias and variance
-- Expected 10-20% RMSE improvement over baseline
-- More robust to outliers in agricultural data
+- Combines multiple weak decision trees to reduce bias and variance
+- Expected 10-20% RMSE improvement over baseline based on similar agricultural studies
+- More robust to outliers (e.g., extreme drought/flood years)
+- Maintains interpretability through feature importance aggregation
 
-**Dimensionality Analysis:** Principal Component Analysis (PCA)
-
-- Address curse of dimensionality from 400+ features after encoding
-- Compare model performance with/without dimensionality reduction
-- Analyze trade-offs between accuracy and interpretability
-
-**Evaluation:** Temporal train/validation/test split (2000-2018 / 2019 / 2020-2023). Metrics: R², RMSE (normalized per statistic type), MAE.
+**Optional exploration:** We may experiment with PCA for dimensionality reduction given our 120 features, but interpretability trade-offs will be carefully evaluated since stakeholders need to understand which climate factors drive predictions.
 
 ## Teaming Strategy
 
-**Meeting Schedule:** Weekly video calls (Sundays 6 PM) + asynchronous collaboration via Discord/GitHub
+**Meeting schedule:** Weekly calls on Sunday afternoons + ongoing collaboration via Discord and GitHub
 
 **Timeline:**
 
-- Week 1-2: Data preprocessing, missing value handling, feature encoding
-- Week 3: Baseline Decision Tree implementation and evaluation
-- Week 4: AdaBoost improvement and hyperparameter tuning
-- Week 5: PCA analysis and dimensionality experiments
-- Week 6: Final evaluation, visualizations, report writing
-
-**Tools:** Jupyter notebooks (version control via Git), scikit-learn, pandas, shared Google Drive for documentation, cleansing tools (powerBI)
-
-**Success Mechanisms:** Weekly progress check-ins, shared task board with deadlines, pair programming for complex sections
+- **Week 1:** Data preprocessing complete (missing values, encoding, train/test split)
+- **Week 1.5:** Implement and evaluate baseline Decision Tree model
+- **Week 2:** AdaBoost implementation and hyperparameter tuning
+- **Week 2.5:** Final evaluation, create visualizations, error analysis
+- **Week 3:** Write report and prepare presentation
 
 ### Role Assignments and Commitment Matrix
 
-*(To be completed with team assignments - example structure below)*
+| Task | Primary | Support | Deadline |
+|------|---------|---------|----------|
+| Data preprocessing & feature engineering | Carter | Johann | Nov 14 |
+| Baseline Decision Tree implementation | Johann | Jay | Nov 21 |
+| AdaBoost improvements | Jay | Carter | Nov 23 |
+| Model evaluation & visualization | Carter | All | Nov 23 |
+| Report writing | All | All | Nov 28 |
+| Presentation preparation | Jay | All | Dec 3 |
 
-- Data preprocessing & feature engineering: TBD
-- Baseline model implementation: TBD
-- AdaBoost improvement: TBD
-- PCA analysis: TBD
-- Evaluation & visualization: TBD
-- Report writing & documentation: All team members
+**Collaboration tools:**
+
+- GitHub for code version control
+- Jupyter notebooks for reproducible analysis
+- Discord for questions and coordination
+- Weekly check-ins to review progress and adjust assignments
+
+**Ensuring success:**
+
+- Each member commits to working on their task each week
+- Shared status updates with clear deadlines
+- Early communication if someone falls behind on their tasks
 
 ## Mitigation Plan
 
-**Data Alternative:** If climate merge fails, use only temporal/spatial features (county, year, crop) as baseline predictors. Alternative: PRISM climate data or Texas specific weather station data.
+**Data alternative:** If the climate merge has issues, we'll use temporal/spatial features (year, county, crop type) as baseline predictors. These alone capture trends and regional differences. We could also incorporate lagged agricultural variables (previous year's yield).
 
-**Task Alternative:** If any key component within our model pipeline fails, implement alernative modeling techniques, maybe even adapting evaluation metrics.
+**Method alternative:**
 
-**Method Alternative:** If Decision Tree performs poorly (R² < 0.3), switch to Random Forest baseline. If AdaBoost doesn't improve, try Gradient Boosting or Neural Network.
+- If Decision Tree performs poorly (R² < 0.50), we'll switch to Random Forest as the baseline
+- If AdaBoost doesn't improve results by at least 5%, we'll try Gradient Boosting or XGBoost
+- If tree-based models fail entirely, we'll fall back to regularized linear regression (Ridge/Lasso)
 
-**Teammate MIA:** Redistribute tasks among remaining members with extended timeline. Critical paths (data prep, baseline model) assigned to most reliable members first.
+**Task alternative:** If any timeline component slips by more than 3 days, we'll adjust by simplifying the improvement phase (e.g., skip PCA experiments) while maintaining core baseline + AdaBoost requirements.
 
-**GIGO Scenario:** If baseline R² < 0.2, investigate: (1) Need for log transformation of target variable, (2) Separate models per statistic type rather than unified approach, (3) Focus on subset of high-quality crops (major commodities only), (4) Add more features (soil type, irrigation data if available).
+**Teammate MIA:**
+
+- If someone is unresponsive for >48 hours, we redistribute their tasks among remaining members
+- Critical path tasks (baseline implementation) get priority reassignment
+
+**Baseline GIGO (Garbage In, Garbage Out):**
+
+- Our EDA shows the data is 93% complete overall, with climate measurements at 96.5% completeness and no impossible values (e.g., negative yields)
+- If we discover issues during modeling, we'll implement data validation checks:
+  - Remove records with missing target values
+  - Filter outliers beyond 3 standard deviations for continuous variables
+  - Verify climate values are within physically possible ranges
+- Worst case: Focus on a subset of high-quality data (major crops + complete climate records only)
