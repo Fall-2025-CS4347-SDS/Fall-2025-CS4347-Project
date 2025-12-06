@@ -136,7 +136,10 @@ These correlations told us early on that corn would be the most predictable crop
 ### 3.1 Data Preprocessing
 
 **Normalization approach:**
-$$\text{VALUE\_NORMALIZED} = \frac{\text{VALUE} - \mu_{group}}{\sigma_{group}}$$
+
+```math
+\text{VALUE\_NORMALIZED} = \frac{\text{VALUE} - \mu_{group}}{\sigma_{group}}
+```
 
 Where group = (COMMODITY_DESC, STATISTICCAT_DESC)
 
