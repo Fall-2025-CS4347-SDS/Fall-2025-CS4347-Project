@@ -12,7 +12,7 @@
 
 This project develops regression models to predict agricultural statistics (yield, production, area harvested) for Texas counties based on climate data. We merged 398,204 USDA agricultural records with NOAA climate measurements from 2000-2023, covering 254 Texas counties and 165 crop types.
 
-Texas agriculture generates over $100 billion annually, and the 2011 drought caused billions in losses. We wanted to quantify how strongly climate affects crop outcomes and identify which factors matter most.
+Texas agriculture generates over $100 billion annually, and the 2011 drought caused billions in losses. Given the inherent limitations of predicting agricultural outcomes from climate alone, **our analysis focuses on feature importance**—identifying which climate factors most strongly influence yields rather than achieving high predictive accuracy.
 
 **Main results:**
 
@@ -404,7 +404,7 @@ The overall R² isn't the point. The real value is understanding:
 
 ## 7. Conclusion
 
-We set out to predict Texas agricultural outcomes from climate data. The mixed-model R² of 0.074 won't win any Kaggle competitions, but the analysis revealed patterns that matter:
+We set out to understand how climate affects Texas agricultural outcomes. Given the low predictive R² (0.074 for mixed models), we pivoted our focus from prediction accuracy to **feature importance analysis**—identifying which climate factors matter most. This revealed patterns that have practical value:
 
 1. **Climate does affect yields:** 82% of feature importance comes from climate variables. Weather isn't just noise—it meaningfully influences agricultural outcomes.
 
